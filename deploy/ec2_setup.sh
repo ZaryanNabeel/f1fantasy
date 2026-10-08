@@ -3,8 +3,8 @@
 # Installs MySQL + nginx + Python, loads the database, and runs the app with gunicorn under systemd.
 #
 # Usage (as the ubuntu user):
-#   curl -fsSL https://raw.githubusercontent.com/<you>/f1fantasy/main/deploy/ec2_setup.sh -o ec2_setup.sh
-#   REPO_URL=https://github.com/<you>/f1fantasy.git bash ec2_setup.sh
+#   curl -fsSL https://raw.githubusercontent.com/ZaryanNabeel/f1fantasy/main/deploy/ec2_setup.sh -o ec2_setup.sh
+#   bash ec2_setup.sh            # clones https://github.com/ZaryanNabeel/f1fantasy.git; override with REPO_URL=...
 #
 # You will be asked for two passwords (use letters and digits only, 12+ chars):
 #   - f1app  : the account the app uses (read/write)
@@ -12,7 +12,7 @@
 # Safe to re-run: existing database rows, users, and the SECRET_KEY are kept.
 set -euo pipefail
 
-REPO_URL="${REPO_URL:?Set REPO_URL to your GitHub clone URL}"
+REPO_URL="${REPO_URL:-https://github.com/ZaryanNabeel/f1fantasy.git}"
 APP_DIR=/home/ubuntu/f1fantasy
 ENV_FILE=/etc/f1fantasy.env
 MYSQL_CNF=/etc/mysql/mysql.conf.d/mysqld.cnf

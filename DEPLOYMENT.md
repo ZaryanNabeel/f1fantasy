@@ -75,8 +75,8 @@ icacls C:\path\to\f1fantasy-key.pem /inheritance:r /grant:r "$($env:USERNAME):(R
 ### I-4. Run the setup script
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/<your-github-user>/f1fantasy/main/deploy/ec2_setup.sh -o ec2_setup.sh
-REPO_URL=https://github.com/<your-github-user>/f1fantasy.git bash ec2_setup.sh
+curl -fsSL https://raw.githubusercontent.com/ZaryanNabeel/f1fantasy/main/deploy/ec2_setup.sh -o ec2_setup.sh
+bash ec2_setup.sh   # clones https://github.com/ZaryanNabeel/f1fantasy.git (set REPO_URL=... to use a fork)
 ```
 The script prompts for the `f1app` and `grader` passwords. It then:
 
