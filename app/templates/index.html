@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>{{ season }} <span class="accent">Fantasy</span> Championship</h1>
+  <p>Pick 5 drivers and 1 constructor within a 100M budget. Score real F1 points every weekend.</p>
+  {% if g.user %}
+    <a class="btn" href="{{ url_for('fantasy.my_team') }}">Go to My Team</a>
+  {% else %}
+    <a class="btn" href="{{ url_for('auth.register') }}">Create your team</a>
+  {% endif %}
+</section>
+
+<div class="grid two">
+  <section class="card">
+    <h2>Next race</h2>
+    {% if next_race %}
+      <p class="big"><a href="{{ url_for('f1.race_detail', race_id=next_race.id) }}">{{ next_race.name }}</a></p>
+      <p class="muted">Round {{ next_race.round }} · {{ next_race.circuit }} · {{ next_race.race_date.strftime('%d %b %Y') }}
+        {% if next_race.has_sprint %}<span class="tag">Sprint</span>{% endif %}</p>
+    {% else %}
+      <p class="muted">No upcoming races this season.</p>
+    {% endif %}
+  </section>
+  <section class="card">
+    <h2>Latest podium{% if latest %} · {{ latest.name }}{% endif %}</h2>
+    {% if podium %}
+      <ol class="podium">
+        {% for p in podium %}
+          <li><span class="pos p{{ p.position }}">P{{ p.position }}</span>
+            <a href="{{ url_for('f1.driver_detail', driver_id=p.driver_id) }}">{{ p.first_name }} {{ p.last_name }}</a>
+            <span class="muted">{{ p.team_name }}</span></li>
+        {% endfor %}
+      </ol>
+    {% else %}
+      <p class="muted">No results yet.</p>
+    {% endif %}
+  </section>
+</div>
+
+<section class="card">
+  <h2>Top 10</h2>
+  {% include "fantasy/_leaderboard_table.html" with context %}
+  <p><a href="{{ url_for('fantasy.leaderboard') }}">Full leaderboard →</a></p>
+</section>
+{% endblock %}

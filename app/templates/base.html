@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}F1 Fantasy League{% endblock %} · F1 Fantasy</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="{{ url_for('main.index') }}"><span class="accent">F1</span> Fantasy League</a>
+  <nav>
+    <a href="{{ url_for('f1.drivers') }}">Drivers</a>
+    <a href="{{ url_for('f1.teams') }}">Teams</a>
+    <a href="{{ url_for('f1.races') }}">Races</a>
+    <a href="{{ url_for('fantasy.leaderboard') }}">Leaderboard</a>
+    {% if g.user %}
+      <a href="{{ url_for('fantasy.my_team') }}">My Team</a>
+      {% if g.user.role == 'admin' %}<a href="{{ url_for('admin.dashboard') }}">Admin</a>{% endif %}
+      <a href="{{ url_for('auth.profile') }}">{{ g.user.username }}</a>
+      <form class="inline" method="post" action="{{ url_for('auth.logout') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="link">Log out</button>
+      </form>
+    {% else %}
+      <a href="{{ url_for('auth.login') }}">Log in</a>
+      <a class="btn small" href="{{ url_for('auth.register') }}">Register</a>
+    {% endif %}
+  </nav>
+</header>
+<main class="container">
+  {% for category, message in get_flashed_messages(with_categories=true) %}
+    <div class="flash {{ category }}">{{ message }}</div>
+  {% endfor %}
+  {% block content %}{% endblock %}
+</main>
+<footer class="footer">Zaryan Nabeel · FA23-BDS-039 · Data: Jolpica-F1</footer>
+</body>
+</html>

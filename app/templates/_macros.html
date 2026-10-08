@@ -1,0 +1,12 @@
+{% macro field(name, label, form, errors, type='text', hint='') -%}
+<label for="{{ name }}">{{ label }}</label>
+<input id="{{ name }}" name="{{ name }}" type="{{ type }}"
+       {% if type != 'password' %}value="{{ form.get(name) if form.get(name) is not none else '' }}"{% endif %}
+       {% if errors.get(name) %}class="invalid"{% endif %} {{ kwargs.get('attrs', '') }}>
+{% if hint %}<small class="hint">{{ hint }}</small>{% endif %}
+{% if errors.get(name) %}<small class="error">{{ errors[name] }}</small>{% endif %}
+{%- endmacro %}
+
+{% macro csrf() -%}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{%- endmacro %}
+
+{% macro swatch(colour) -%}<span class="swatch" style="background: {{ colour or '#555' }}"></span>{%- endmacro %}

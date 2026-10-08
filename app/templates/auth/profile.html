@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<section class="card narrow">
+  <h1>{{ g.user.username }}</h1>
+  <dl class="facts">
+    <dt>Email</dt><dd>{{ g.user.email }}</dd>
+    <dt>Role</dt><dd>{{ g.user.role }}</dd>
+    <dt>Joined</dt><dd>{{ g.user.created_at.strftime('%d %b %Y') }}</dd>
+  </dl>
+  <h2>{{ season }} fantasy team</h2>
+  {% if team %}
+    <p class="big"><a href="{{ url_for('fantasy.view_team', team_id=team.fantasy_team_id) }}">{{ team.team_name }}</a></p>
+    <p>{{ '%g' % team.total_points }} points · <a href="{{ url_for('fantasy.edit_team') }}">Edit picks</a></p>
+  {% else %}
+    <p class="muted">You have no team yet.</p>
+    <a class="btn" href="{{ url_for('fantasy.edit_team') }}">Create your team</a>
+  {% endif %}
+</section>
+{% endblock %}

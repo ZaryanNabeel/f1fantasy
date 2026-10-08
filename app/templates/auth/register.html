@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% import "_macros.html" as m with context %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<section class="card narrow">
+  <h1>Create account</h1>
+  <form method="post" novalidate>
+    {{ m.csrf() }}
+    {{ m.field('username', 'Username', form, errors, hint='3-30 letters, digits or underscore') }}
+    {{ m.field('email', 'Email', form, errors, type='email') }}
+    {{ m.field('password', 'Password', form, errors, type='password', hint='At least 8 characters with a letter and a digit') }}
+    {{ m.field('confirm', 'Confirm password', form, errors, type='password') }}
+    <button class="btn">Register</button>
+  </form>
+  <p class="muted">Already have an account? <a href="{{ url_for('auth.login') }}">Log in</a></p>
+</section>
+{% endblock %}
