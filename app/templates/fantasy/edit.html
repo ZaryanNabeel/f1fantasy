@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% import "_macros.html" as m with context %}
+{% block title %}{{ 'Edit' if existing else 'Create' }} team{% endblock %}
+{% block content %}
+<h1>{{ 'Edit' if existing else 'Create' }} your {{ season }} team</h1>
+{% if errors %}
+  <div class="flash error"><strong>Team not saved:</strong>
+    <ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul></div>
+{% endif %}
+<form method="post" id="team-form" data-budget="{{ budget }}">
+  {{ m.csrf() }}
+  <section class="card">
+    <label for="name">Team name</label>
+    <input id="name" name="name" value="{{ form.name }}" maxlength="40" required>
+    <small class="hint">3-40 characters, unique this season.</small>
+  </section>
+
+  <div class="sticky-summary card">
+    Drivers <strong id="count">0</strong>/5 · Budget used <strong id="spent">0.0</strong>M of {{ budget }}M
+  </div>
+
+  <section class="card">
+    <h2>Constructor <small class="muted">(pick 1)</small></h2>
+    <div class="pick-grid">
+    {% for t in teams %}
+      <label class="pick">
+        <input type="radio" name="constructor_id" value="{{ t.id }}" data-price="{{ t.price }}"
+               {% if t.id == form.constructor_id %}checked{% endif %}>
+        <span>{{ m.swatch(t.colour_hex) }}{{ t.name }}{% if not t.active %} (inactive){% endif %}</span>
+        <span class="price">{{ t.price }}M</span>
+      </label>
+    {% endfor %}
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Drivers <small class="muted">(pick 5, max 2 per team)</small></h2>
+    <div class="pick-grid">
+    {% for d in drivers %}
+      <label class="pick">
+        <input type="checkbox" name="drivers" value="{{ d.id }}" data-price="{{ d.price }}"
+               {% if d.id in form.driver_ids %}checked{% endif %}>
+        <span>{{ d.first_name }} {{ d.last_name }} <small class="muted">{{ d.team_name }}</small>{% if not d.active %} (inactive){% endif %}</span>
+        <span class="price">{{ d.price }}M</span>
+      </label>
+    {% endfor %}
+    </div>
+  </section>
+  <button class="btn">Save team</button>
+</form>
+<script>
+  // Live counter only; every rule is still enforced on the server.
+  (function () {
+    var form = document.getElementById('team-form');
+    function update() {
+      var spent = 0, count = 0;
+      form.querySelectorAll('input[data-price]:checked').forEach(function (el) {
+        spent += parseFloat(el.dataset.price);
+        if (el.type === 'checkbox') count++;
+      });
+      document.getElementById('count').textContent = count;
+      var s = document.getElementById('spent');
+      s.textContent = spent.toFixed(1);
+      s.className = spent > parseFloat(form.dataset.budget) ? 'over' : '';
+    }
+    form.addEventListener('change', update);
+    update();
+  })();
+</script>
+{% endblock %}

@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Leaderboard{% endblock %}
+{% block content %}
+<h1>{{ season }} Leaderboard</h1>
+<p class="muted">Ranked by total points; ties go to the team created first.</p>
+<section class="card">{% include "fantasy/_leaderboard_table.html" with context %}</section>
+{% endblock %}

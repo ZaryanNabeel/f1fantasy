@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% import "_macros.html" as m %}
+{% block title %}{{ team.name if team else 'My Team' }}{% endblock %}
+{% block content %}
+{% if not team %}
+  <section class="card narrow center">
+    <h1>Create your {{ season }} team</h1>
+    <p>Pick 5 drivers and 1 constructor. Stay within the 100.0M budget, with max 2 drivers from the same team.</p>
+    <a class="btn" href="{{ url_for('fantasy.edit_team') }}">Build my team</a>
+  </section>
+{% else %}
+  <section class="card">
+    <div class="row-between">
+      <div>
+        <h1>{{ team.name }}</h1>
+        <p class="muted">Owned by {{ team.username }} · {{ team.season }} season</p>
+      </div>
+      <div class="score"><span class="big">{{ '%g' % team.total }}</span><small>points</small></div>
+    </div>
+    {% if own %}<a class="btn" href="{{ url_for('fantasy.edit_team') }}">Edit picks</a>{% endif %}
+  </section>
+
+  <div class="grid two">
+    <section class="card">
+      <h2>Drivers</h2>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Driver</th><th>Team</th><th class="num">Price</th><th class="num">Pts</th></tr></thead>
+        <tbody>
+        {% for p in team.picks %}
+          <tr><td><a href="{{ url_for('f1.driver_detail', driver_id=p.id) }}">{{ p.first_name }} {{ p.last_name }}</a>
+            {% if not p.active %}<span class="tag">inactive</span>{% endif %}</td>
+            <td>{{ p.team_name }}</td><td class="num">{{ p.price }}M</td><td class="num">{{ '%g' % p.points }}</td></tr>
+        {% endfor %}
+        </tbody>
+      </table></div>
+      <h2>Constructor</h2>
+      <p>{{ m.swatch(team.constructor_colour) }}<a href="{{ url_for('f1.team_detail', team_id=team.constructor_id) }}">{{ team.constructor_name }}</a>
+        · {{ team.constructor_price }}M · {{ '%g' % team.constructor_points }} pts</p>
+    </section>
+    <section class="card">
+      <h2>Budget</h2>
+      <dl class="facts">
+        <dt>Used</dt><dd>{{ team.budget_used }}M</dd>
+        <dt>Remaining</dt><dd>{{ team.budget_left }}M</dd>
+      </dl>
+      <div class="meter"><span style="width: {{ [team.budget_used, 100]|min }}%"></span></div>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>Points by race</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Rd</th><th>Race</th><th class="num">Drivers</th><th class="num">Constructor</th><th class="num">Total</th></tr></thead>
+      <tbody>
+      {% for b in team.breakdown %}
+        <tr><td>{{ b.round }}</td>
+          <td><a href="{{ url_for('f1.race_detail', race_id=b.race_id) }}">{{ b.race_name }}</a></td>
+          <td class="num">{{ '%g' % b.drivers }}</td><td class="num">{{ '%g' % b.constructor }}</td>
+          <td class="num"><strong>{{ '%g' % b.total }}</strong></td></tr>
+      {% else %}
+        <tr><td colspan="5" class="muted">No races scored yet.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+  </section>
+{% endif %}
+{% endblock %}
