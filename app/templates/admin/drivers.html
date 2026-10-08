@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% import "_macros.html" as m with context %}
+{% block title %}Admin · Drivers{% endblock %}
+{% block content %}
+<div class="row-between"><h1>Drivers</h1><a class="btn" href="{{ url_for('admin.driver_form') }}">New driver</a></div>
+<div class="table-wrap card"><table>
+  <thead><tr><th>Code</th><th>#</th><th>Name</th><th>Team</th><th class="num">Price</th><th>Status</th><th></th></tr></thead>
+  <tbody>
+  {% for d in drivers %}
+    <tr{% if not d.active %} class="dim"{% endif %}>
+      <td class="code">{{ d.code }}</td><td>{{ d.permanent_number or '' }}</td>
+      <td>{{ d.first_name }} {{ d.last_name }}</td><td>{{ d.team_name }}</td>
+      <td class="num">{{ d.price }}M</td><td>{{ 'active' if d.active else 'inactive' }}</td>
+      <td class="actions">
+        <a href="{{ url_for('admin.driver_form', driver_id=d.id) }}">Edit</a>
+        {% if d.active %}
+        <form class="inline" method="post" action="{{ url_for('admin.driver_deactivate', driver_id=d.id) }}">
+          {{ m.csrf() }}<button class="link danger">Deactivate</button></form>
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table></div>
+{% endblock %}

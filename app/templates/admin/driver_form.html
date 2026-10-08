@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% import "_macros.html" as m with context %}
+{% block title %}Admin · {{ 'Edit' if driver else 'New' }} driver{% endblock %}
+{% block content %}
+<section class="card narrow">
+  <h1>{{ 'Edit' if driver else 'New' }} driver</h1>
+  <form method="post" novalidate>
+    {{ m.csrf() }}
+    {{ m.field('driver_ref', 'Reference (Jolpica driverId)', form, errors, hint='e.g. max_verstappen') }}
+    {{ m.field('code', 'Code', form, errors, hint='3 uppercase letters, e.g. VER') }}
+    {{ m.field('permanent_number', 'Permanent number', form, errors, type='number', hint='1-99, optional') }}
+    {{ m.field('first_name', 'First name', form, errors) }}
+    {{ m.field('last_name', 'Last name', form, errors) }}
+    {{ m.field('nationality', 'Nationality', form, errors) }}
+    <label for="team_id">Team</label>
+    <select id="team_id" name="team_id" {% if errors.team_id %}class="invalid"{% endif %}>
+      <option value="">— choose —</option>
+      {% for t in teams %}
+        <option value="{{ t.id }}" {% if t.id|string == form.get('team_id')|string %}selected{% endif %}>{{ t.name }}</option>
+      {% endfor %}
+    </select>
+    {% if errors.team_id %}<small class="error">{{ errors.team_id }}</small>{% endif %}
+    {{ m.field('price', 'Price (M)', form, errors, type='number', hint='4.0-35.0 in steps of 0.5', attrs='step=0.5 min=4 max=35') }}
+    <label class="check"><input type="checkbox" name="active" value="1"
+      {% if form.get('active', 1)|string in ('1', 'True') %}checked{% endif %}> Active</label>
+    <button class="btn">Save</button>
+    <a href="{{ url_for('admin.drivers') }}">Cancel</a>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% import "_macros.html" as m %}
+{% block title %}Teams{% endblock %}
+{% block content %}
+<h1>{{ season }} Constructors</h1>
+<div class="table-wrap card"><table>
+  <thead><tr><th>Team</th><th>Nationality</th><th class="num">Price</th><th class="num">Points</th></tr></thead>
+  <tbody>
+  {% for t in teams %}
+    <tr>
+      <td>{{ m.swatch(t.colour_hex) }}<a href="{{ url_for('f1.team_detail', team_id=t.id) }}">{{ t.name }}</a></td>
+      <td>{{ t.nationality or '' }}</td>
+      <td class="num">{{ t.price }}M</td>
+      <td class="num">{{ '%g' % t.points }}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="4" class="muted">No teams loaded yet.</td></tr>
+  {% endfor %}
+  </tbody>
+</table></div>
+{% endblock %}

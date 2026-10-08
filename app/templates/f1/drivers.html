@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% import "_macros.html" as m %}
+{% block title %}Drivers{% endblock %}
+{% block content %}
+<h1>{{ season }} Drivers</h1>
+<div class="table-wrap card"><table>
+  <thead><tr><th>#</th><th>Driver</th><th>Team</th><th>Nationality</th><th class="num">Price</th><th class="num">Points</th></tr></thead>
+  <tbody>
+  {% for d in drivers %}
+    <tr>
+      <td>{{ d.permanent_number or '' }}</td>
+      <td><a href="{{ url_for('f1.driver_detail', driver_id=d.id) }}">{{ d.first_name }} {{ d.last_name }}</a> <span class="code">{{ d.code }}</span></td>
+      <td>{{ m.swatch(d.colour_hex) }}{{ d.team_name }}</td>
+      <td>{{ d.nationality or '' }}</td>
+      <td class="num">{{ d.price }}M</td>
+      <td class="num">{{ '%g' % d.points }}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="6" class="muted">No drivers loaded yet.</td></tr>
+  {% endfor %}
+  </tbody>
+</table></div>
+{% endblock %}

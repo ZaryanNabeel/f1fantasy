@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% import "_macros.html" as m %}
+{% block title %}{{ driver.first_name }} {{ driver.last_name }}{% endblock %}
+{% block content %}
+<section class="card">
+  <h1>{{ driver.first_name }} {{ driver.last_name }} <span class="code">{{ driver.code }}</span>
+    {% if not driver.active %}<span class="tag">inactive</span>{% endif %}</h1>
+  <dl class="facts">
+    <dt>Team</dt><dd>{{ m.swatch(driver.colour_hex) }}<a href="{{ url_for('f1.team_detail', team_id=driver.team_id) }}">{{ driver.team_name }}</a></dd>
+    <dt>Number</dt><dd>{{ driver.permanent_number or '—' }}</dd>
+    <dt>Nationality</dt><dd>{{ driver.nationality or '—' }}</dd>
+    <dt>Price</dt><dd>{{ driver.price }}M</dd>
+    <dt>Season points</dt><dd class="big">{{ '%g' % points }}</dd>
+  </dl>
+</section>
+<section class="card">
+  <h2>Results</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Rd</th><th>Race</th><th>Session</th><th>Team</th><th class="num">Grid</th><th class="num">Pos</th><th>Status</th><th class="num">Pts</th></tr></thead>
+    <tbody>
+    {% for r in results %}
+      <tr>
+        <td>{{ r.round }}</td>
+        <td><a href="{{ url_for('f1.race_detail', race_id=r.race_id) }}">{{ r.race_name }}</a></td>
+        <td>{{ r.session_type|title }}</td>
+        <td>{{ r.team_name }}</td>
+        <td class="num">{{ r.grid if r.grid is not none else '' }}</td>
+        <td class="num">{{ r.position or 'NC' }}</td>
+        <td>{{ r.status or '' }}</td>
+        <td class="num">{{ '%g' % r.points }}</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="8" class="muted">No results this season.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+</section>
+{% endblock %}

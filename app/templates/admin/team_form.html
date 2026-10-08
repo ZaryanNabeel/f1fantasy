@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% import "_macros.html" as m with context %}
+{% block title %}Admin · {{ 'Edit' if team else 'New' }} team{% endblock %}
+{% block content %}
+<section class="card narrow">
+  <h1>{{ 'Edit' if team else 'New' }} team</h1>
+  <form method="post" novalidate>
+    {{ m.csrf() }}
+    {{ m.field('constructor_ref', 'Reference (Jolpica constructorId)', form, errors, hint='e.g. mclaren') }}
+    {{ m.field('name', 'Name', form, errors) }}
+    {{ m.field('nationality', 'Nationality', form, errors) }}
+    {{ m.field('colour_hex', 'Colour', form, errors, hint='Optional, e.g. #FF8000') }}
+    {{ m.field('price', 'Price (M)', form, errors, type='number', hint='4.0-35.0 in steps of 0.5', attrs='step=0.5 min=4 max=35') }}
+    <label class="check"><input type="checkbox" name="active" value="1"
+      {% if form.get('active', 1)|string in ('1', 'True') %}checked{% endif %}> Active</label>
+    <button class="btn">Save</button>
+    <a href="{{ url_for('admin.teams') }}">Cancel</a>
+  </form>
+</section>
+{% endblock %}

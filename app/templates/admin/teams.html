@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% import "_macros.html" as m with context %}
+{% block title %}Admin · Teams{% endblock %}
+{% block content %}
+<div class="row-between"><h1>Teams</h1><a class="btn" href="{{ url_for('admin.team_form') }}">New team</a></div>
+<div class="table-wrap card"><table>
+  <thead><tr><th>Team</th><th>Reference</th><th class="num">Price</th><th>Status</th><th></th></tr></thead>
+  <tbody>
+  {% for t in teams %}
+    <tr{% if not t.active %} class="dim"{% endif %}>
+      <td>{{ m.swatch(t.colour_hex) }}{{ t.name }}</td><td class="code">{{ t.constructor_ref }}</td>
+      <td class="num">{{ t.price }}M</td><td>{{ 'active' if t.active else 'inactive' }}</td>
+      <td class="actions">
+        <a href="{{ url_for('admin.team_form', team_id=t.id) }}">Edit</a>
+        {% if t.active %}
+        <form class="inline" method="post" action="{{ url_for('admin.team_deactivate', team_id=t.id) }}">
+          {{ m.csrf() }}<button class="link danger">Deactivate</button></form>
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table></div>
+{% endblock %}

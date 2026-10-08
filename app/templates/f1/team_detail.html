@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% import "_macros.html" as m %}
+{% block title %}{{ team.name }}{% endblock %}
+{% block content %}
+<section class="card">
+  <h1>{{ m.swatch(team.colour_hex) }}{{ team.name }} {% if not team.active %}<span class="tag">inactive</span>{% endif %}</h1>
+  <dl class="facts">
+    <dt>Nationality</dt><dd>{{ team.nationality or '—' }}</dd>
+    <dt>Price</dt><dd>{{ team.price }}M</dd>
+    <dt>Season points</dt><dd class="big">{{ '%g' % points }}</dd>
+  </dl>
+</section>
+<section class="card">
+  <h2>Drivers</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Driver</th><th class="num">Price</th><th class="num">Points</th></tr></thead>
+    <tbody>
+    {% for d in drivers %}
+      <tr><td><a href="{{ url_for('f1.driver_detail', driver_id=d.id) }}">{{ d.first_name }} {{ d.last_name }}</a>
+        {% if not d.active %}<span class="tag">inactive</span>{% endif %}</td>
+        <td class="num">{{ d.price }}M</td><td class="num">{{ '%g' % d.points }}</td></tr>
+    {% else %}
+      <tr><td colspan="3" class="muted">No drivers.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  <p class="muted">Constructor points count every driver who raced for this team, including mid-season swaps.</p>
+</section>
+{% endblock %}

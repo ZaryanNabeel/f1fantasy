@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Calendar{% endblock %}
+{% block content %}
+<h1>{{ season }} Calendar</h1>
+<div class="table-wrap card"><table>
+  <thead><tr><th>Rd</th><th>Grand Prix</th><th>Circuit</th><th>Country</th><th>Date</th><th></th></tr></thead>
+  <tbody>
+  {% for r in races %}
+    <tr>
+      <td>{{ r.round }}</td>
+      <td><a href="{{ url_for('f1.race_detail', race_id=r.id) }}">{{ r.name }}</a>
+        {% if r.has_sprint %}<span class="tag">Sprint</span>{% endif %}</td>
+      <td>{{ r.circuit }}</td>
+      <td>{{ r.country or '' }}</td>
+      <td>{{ r.race_date.strftime('%d %b') }}</td>
+      <td>{% if r.has_results %}<a href="{{ url_for('f1.race_detail', race_id=r.id) }}">Results</a>{% endif %}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="6" class="muted">No races loaded yet.</td></tr>
+  {% endfor %}
+  </tbody>
+</table></div>
+{% endblock %}

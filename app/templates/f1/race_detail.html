@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% import "_macros.html" as m %}
+{% block title %}{{ race.name }}{% endblock %}
+{% block content %}
+<section class="card">
+  <h1>{{ race.name }}</h1>
+  <p class="muted">Round {{ race.round }} · {{ race.circuit }}{% if race.country %}, {{ race.country }}{% endif %} · {{ race.race_date.strftime('%d %b %Y') }}</p>
+</section>
+{% for key, label in [('race', 'Grand Prix'), ('sprint', 'Sprint')] %}
+  {% if sessions[key] or (key == 'race') %}
+  <section class="card">
+    <h2>{{ label }}</h2>
+    {% if sessions[key] %}
+    <div class="table-wrap"><table>
+      <thead><tr><th class="num">Pos</th><th>Driver</th><th>Team</th><th class="num">Grid</th><th>Status</th><th class="num">Pts</th></tr></thead>
+      <tbody>
+      {% for r in sessions[key] %}
+        <tr>
+          <td class="num">{{ r.position or 'NC' }}</td>
+          <td><a href="{{ url_for('f1.driver_detail', driver_id=r.driver_id) }}">{{ r.first_name }} {{ r.last_name }}</a></td>
+          <td>{{ m.swatch(r.colour_hex) }}{{ r.team_name }}</td>
+          <td class="num">{{ r.grid if r.grid is not none else '' }}</td>
+          <td>{{ r.status or '' }}</td>
+          <td class="num">{{ '%g' % r.points }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {% else %}
+      <p class="muted">No results yet.</p>
+    {% endif %}
+  </section>
+  {% endif %}
+{% endfor %}
+{% endblock %}
