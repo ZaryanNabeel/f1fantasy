@@ -1,0 +1,16 @@
+[Unit]
+Description=F1 Fantasy League (gunicorn)
+After=network.target mysql.service
+Wants=mysql.service
+
+[Service]
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/f1fantasy
+EnvironmentFile=/etc/f1fantasy.env
+ExecStart=/home/ubuntu/f1fantasy/.venv/bin/gunicorn --bind 127.0.0.1:8000 --workers 2 --timeout 60 application:application
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
