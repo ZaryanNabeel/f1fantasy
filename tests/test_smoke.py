@@ -114,8 +114,8 @@ def test_public_pages(client):
 
 def test_register_login_logout(client):
     assert register(client).status_code == 302
+    client.post("/logout")  # registering logs in; /register redirects logged-in users
     assert register(client, username="ALICE_1", email="other@example.com").status_code == 400  # case-insensitive
-    client.post("/logout")
     bad = client.post("/login", data={"username": "alice_1", "password": "wrong-pass1"})
     assert bad.status_code == 401 and b"Invalid username or password." in bad.data
     resp = client.post("/login", data={"username": "alice_1", "password": "password1", "next": "/profile"})
