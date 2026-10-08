@@ -2,7 +2,8 @@ from decimal import Decimal
 
 from app import create_app
 from app.auth.services import is_safe_next, validate_registration
-from app.f1data.jolpica import constructor_price, driver_price, latest_constructor, parse_results
+from app.f1data.jolpica import (constructor_price, driver_price, fetch_races_paginated, latest_constructor,
+                                parse_results)
 from app.f1data.services import parse_price
 from app.fantasy.services import race_breakdown, validate_picks
 
@@ -67,6 +68,21 @@ def test_parse_results_and_current_team():
     rows = parse_results(races, "Results", "race")
     assert rows[1]["position"] is None and rows[0]["position"] == 1
     assert latest_constructor(rows) == {"a": "z", "b": "y"}
+
+
+def test_pagination_merges_races_split_across_pages():
+    # 150 results over 2 pages; round 2 is split between them
+    pages = {0: [{"round": "1", "Results": [1] * 80}, {"round": "2", "Results": [2] * 20}],
+             100: [{"round": "2", "Results": [2] * 30}, {"round": "3", "Results": [3] * 20}]}
+    calls = []
+
+    def fake_fetch(path, params):
+        calls.append(params["offset"])
+        return {"MRData": {"total": "150", "RaceTable": {"Races": pages[params["offset"]]}}}
+
+    races = fetch_races_paginated("2026/results.json", "Results", fake_fetch)
+    assert calls == [0, 100]
+    assert [len(r["Results"]) for r in races] == [80, 50, 20]
 
 
 def test_race_breakdown_credits_constructor_by_result_team():
