@@ -81,22 +81,25 @@ pipeline {
                     echo "Could not read commit author: ${e}"
                 }
 
-                // GitHub web edits can use a private noreply address; map known logins to real emails
-                def known = [
-                    'malik-qasim' : 'qasimalik@gmail.com',
-                    'qasimalik'   : 'qasimalik@gmail.com',
-                    'zaryannabeel': 'zarocr7@gmail.com'
-                ]
-                def to = author
-                if (!author || author.contains('noreply.github.com')) {
-                    def login = author ? author.replaceAll(/^(\d+\+)?([^@]+)@.*$/, '$2').toLowerCase() : ''
-                    to = known[login] ?: 'qasimalik@gmail.com'
+                // Recipient = whoever authored the pushed commit.
+                // Anything unknown or unresolvable goes to the repo owner, NEVER to the instructor by default.
+                def OWNER_EMAIL       = 'zarocr7@gmail.com'
+                def INSTRUCTOR_EMAIL  = 'qasimalik@gmail.com'
+                def INSTRUCTOR_LOGINS = ['malik-qasim', 'qasimalik']
+
+                def to = OWNER_EMAIL
+                if (author && !author.contains('noreply.github.com')) {
+                    to = author                                   // real address of the pusher
+                } else if (author) {
+                    // GitHub private address: 12345+login@users.noreply.github.com
+                    def login = author.replaceAll(/^(\d+\+)?([^@]+)@.*$/, '$2').toLowerCase()
+                    to = INSTRUCTOR_LOGINS.contains(login) ? INSTRUCTOR_EMAIL : OWNER_EMAIL
                 }
                 echo "Sending build result to: ${to}"
 
                 emailext(
                     to: to,
-                    recipientProviders: [developers(), requestor()],
+                    recipientProviders: [requestor()],
                     subject: "Jenkins ${currentBuild.currentResult}: ${env.JOB_NAME} #${env.BUILD_NUMBER} (F1 Fantasy)",
                     mimeType: 'text/html',
                     attachLog: true,
