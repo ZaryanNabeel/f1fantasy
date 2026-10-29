@@ -1,0 +1,15 @@
+.git
+.env
+.env.*
+.venv
+venv
+__pycache__/
+*.pyc
+*.zip
+docker-compose*.yml
+Jenkinsfile
+.ebextensions
+.pytest_cache
+tests
+deploy
+*.md
